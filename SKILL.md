@@ -1,9 +1,9 @@
 ---
-name: x-trend-digest
+name: builder-trend-digest
 description: Daily trend digest for X/Twitter and AI GitHub projects. Use when user asks to collect trends for AI Marketing, AI Coding, AI Design, General AI, plus interesting new AI projects from @GithubProjects; summarize via OpenRouter nano model; deduplicate with 7-day memory; and prepare Telegram/Notion outputs.
 ---
 
-# X Trend Digest
+# Builder Trend Digest
 
 ## Goal
 Run a daily pipeline (manual or cron):
@@ -40,7 +40,7 @@ Run a daily pipeline (manual or cron):
 
 ## Run (manual)
 ```bash
-python3 skills/x-trend-digest/scripts/run.py
+python3 skills/builder-trend-digest/scripts/run.py
 ```
 
 ## Outputs

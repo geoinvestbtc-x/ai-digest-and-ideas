@@ -13,7 +13,7 @@ sys.path.insert(0, str(_scripts_dir))
 import requests
 
 HEADERS = {
-    "User-Agent": os.getenv("REDDIT_USER_AGENT", "x-trend-digest/1.0 (digest bot)"),
+    "User-Agent": os.getenv("REDDIT_USER_AGENT", "builder-trend-digest/1.0 (digest bot)"),
     "Accept": "application/json",
 }
 SLEEP = float(os.getenv("REDDIT_SLEEP", "1.1"))

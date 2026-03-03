@@ -107,7 +107,7 @@ def run(discovered_blocks):
     # ── LOG ──
     for cat, st in stats.items():
         print(
-            f"[x-trend][norm] cat={cat} "
+            f"[builder-trend][norm] cat={cat} "
             f"in={st['in']} url_dup={st['url_dup']} id_dup={st['id_dup']} "
             f"text_dup={st['text_dup']} out={st['out']}"
         )

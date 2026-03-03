@@ -295,7 +295,7 @@ def llm_weekly_analysis(category: str, enriched_tweets: list) -> str:
         'Authorization': f'Bearer {OPENROUTER_KEY}',
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://local.openclaw',
-        'X-Title': 'x-trend-weekly-digest',
+        'X-Title': 'builder-trend-weekly-digest',
     }
     payload = {
         'model': WEEKLY_MODEL,

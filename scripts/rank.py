@@ -175,12 +175,12 @@ def run(items, max_candidates_per_category=25):
         rejected = total_in - passed
         reason_str = " ".join(f"{k}={v}" for k, v in sorted(reasons.get(cat, {}).items()))
         print(
-            f"[x-trend][rank] cat={cat} in={total_in} passed={passed} "
+            f"[builder-trend][rank] cat={cat} in={total_in} passed={passed} "
             f"rejected={rejected}"
             + (f" reasons: {reason_str}" if reason_str else "")
         )
         for ex in rejected_examples.get(cat, []):
-            print(f"[x-trend][rank]   example: {ex}")
+            print(f"[builder-trend][rank]   example: {ex}")
 
         # Average score components for passed items
         cc = cat_components.get(cat)
@@ -189,7 +189,7 @@ def run(items, max_candidates_per_category=25):
             avg_v = sum(cc['velocity']) / n
             avg_r = sum(cc['relative']) / n
             avg_vir = sum(cc['virality']) / n
-            print(f"[x-trend][rank] cat={cat} avg_velocity={avg_v:.2f} "
+            print(f"[builder-trend][rank] cat={cat} avg_velocity={avg_v:.2f} "
                   f"avg_relative={avg_r:.2f} avg_virality={avg_vir:.3f}")
 
     out = []
@@ -198,7 +198,7 @@ def run(items, max_candidates_per_category=25):
         top = arr[:max_candidates_per_category]
         if top:
             scores = [x['score'] for x in top[:5]]
-            print(f"[x-trend][rank] cat={cat} top_scores={scores}")
+            print(f"[builder-trend][rank] cat={cat} top_scores={scores}")
         out.extend(top)
 
     return out

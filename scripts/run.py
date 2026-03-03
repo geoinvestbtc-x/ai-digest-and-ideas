@@ -53,7 +53,7 @@ def _mask(val: str, show_start=4, show_end=4) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='X Trend Digest pipeline')
+    parser = argparse.ArgumentParser(description='Builder Trend Digest pipeline')
     parser.add_argument('--dry-run', action='store_true',
                         help='Run full pipeline (discover→rank→summarize) but skip Telegram send and memory writes')
     parser.add_argument('--no-reddit', action='store_true',
@@ -433,7 +433,7 @@ def main():
     save_json(payload_path, picks)
     save_json(tg_json, messages)
 
-    md_lines = [f'# X Trend Digest ({ts} UTC)', '']
+    md_lines = [f'# Builder Trend Digest ({ts} UTC)', '']
     for m in messages:
         md_lines.append(m['text'])
         md_lines.append('')
@@ -470,7 +470,7 @@ def main():
     for cat in sorted(funnel.keys()):
         f = funnel[cat]
         print(
-            f"[x-trend][summary] {cat}: "
+            f"[builder-trend][summary] {cat}: "
             f"discovered={f['discovered']} in_window={f['in_window']} "
             f"after_dedup={f['after_dedup']} after_rank={f['after_rank']} "
             f"picks={f['picks']} sent={f['sent']}"
@@ -479,14 +479,14 @@ def main():
             totals[k] += v
 
     print(
-        f"[x-trend][summary] TOTAL: "
+        f"[builder-trend][summary] TOTAL: "
         f"discovered={totals['discovered']} in_window={totals['in_window']} "
         f"after_dedup={totals['after_dedup']} after_rank={totals['after_rank']} "
         f"picks={totals['picks']} msgs={len(messages)} sent={sent_count}"
     )
     if usage_stats:
         print(
-            f"[x-trend][summary] LLM: "
+            f"[builder-trend][summary] LLM: "
             f"calls={usage_stats.get('llm_calls', 0)} "
             f"prompt={usage_stats.get('prompt_tokens', 0):,} "
             f"completion={usage_stats.get('completion_tokens', 0):,} "

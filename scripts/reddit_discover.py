@@ -43,7 +43,7 @@ TOP_LIMIT           = int(os.getenv('REDDIT_TOP_LIMIT', '25'))
 SLEEP_BETWEEN       = float(os.getenv('REDDIT_SLEEP', '1.1'))  # seconds between requests
 
 _HEADERS = {
-    'User-Agent': os.getenv('REDDIT_USER_AGENT', 'x-trend-digest/1.0 (personal digest bot)'),
+    'User-Agent': os.getenv('REDDIT_USER_AGENT', 'builder-trend-digest/1.0 (personal digest bot)'),
     'Accept': 'application/json',
 }
 

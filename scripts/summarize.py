@@ -148,7 +148,7 @@ def _call_llm(category, candidates, picks_n=5, attempt=0):
         'Authorization': f'Bearer {key}',
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://local.openclaw',
-        'X-Title': 'x-trend-digest',
+        'X-Title': 'builder-trend-digest',
     }
     payload = {
         'model': MODEL,
@@ -161,12 +161,12 @@ def _call_llm(category, candidates, picks_n=5, attempt=0):
         'response_format': {'type': 'json_object'},
     }
 
-    print(f"[x-trend][llm] cat={category} model={MODEL} candidates={len(candidates)} "
+    print(f"[builder-trend][llm] cat={category} model={MODEL} candidates={len(candidates)} "
           f"picks_n={picks_n} attempt={attempt}")
 
     r = requests.post('https://openrouter.ai/api/v1/chat/completions', headers=headers, json=payload, timeout=120)
 
-    print(f"[x-trend][llm] cat={category} status={r.status_code} raw_len={len(r.text or '')}")
+    print(f"[builder-trend][llm] cat={category} status={r.status_code} raw_len={len(r.text or '')}")
 
     r.raise_for_status()
 
@@ -181,7 +181,7 @@ def _call_llm(category, candidates, picks_n=5, attempt=0):
         finish_reason = choice.get('finish_reason') or choice.get('native_finish_reason')
         usage = data_json.get('usage', {})
     except (KeyError, IndexError, TypeError) as e:
-        print(f"[x-trend][llm] ⚠ structure error: {e}")
+        print(f"[builder-trend][llm] ⚠ structure error: {e}")
 
     prompt_tokens = usage.get('prompt_tokens', 0)
     completion_tokens = usage.get('completion_tokens', 0)
@@ -193,18 +193,18 @@ def _call_llm(category, candidates, picks_n=5, attempt=0):
         'reasoning_tokens': reasoning_tokens,
     }
 
-    print(f"[x-trend][llm] cat={category} finish={finish_reason} "
+    print(f"[builder-trend][llm] cat={category} finish={finish_reason} "
           f"tokens={completion_tokens} reasoning={reasoning_tokens} "
           f"content_len={len(content or '')}")
 
     if finish_reason in ('length', 'max_output_tokens'):
-        print(f"[x-trend][llm] ⚠ TRUNCATED! reasoning={reasoning_tokens}/{completion_tokens}")
+        print(f"[builder-trend][llm] ⚠ TRUNCATED! reasoning={reasoning_tokens}/{completion_tokens}")
 
     content = (content or "").strip()
 
     if not content:
         msg_obj = data_json.get('choices', [{}])[0].get('message', {})
-        print(f"[x-trend][llm] ⚠ EMPTY content! keys={list(msg_obj.keys())}")
+        print(f"[builder-trend][llm] ⚠ EMPTY content! keys={list(msg_obj.keys())}")
 
     if '```' in content:
         m = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', content)
@@ -250,7 +250,7 @@ def run(items, picks_n=5):
                 total_usage['llm_calls'] += 1
 
                 if not raw:
-                    print(f"[x-trend][llm] ⚠ empty for {category} (attempt {attempt})")
+                    print(f"[builder-trend][llm] ⚠ empty for {category} (attempt {attempt})")
                     if attempt < max_attempts - 1:
                         time.sleep(2)
                         continue
@@ -277,7 +277,7 @@ def run(items, picks_n=5):
 
                 skipped = effective_picks_n - len(out_picks)
                 avg_title = (sum(len(p['title']) for p in out_picks) / len(out_picks)) if out_picks else 0
-                print(f"[x-trend][llm] ✅ cat={category} picks={len(out_picks)} "
+                print(f"[builder-trend][llm] ✅ cat={category} picks={len(out_picks)} "
                       f"skipped_by_llm={skipped} avg_title_len={avg_title:.0f}")
 
                 results.extend(out_picks)
@@ -287,13 +287,13 @@ def run(items, picks_n=5):
             except Exception as e:
                 last_error = e
                 snippet = repr(raw[:200]) if raw else 'EMPTY'
-                print(f"[x-trend][llm] ❌ {category} attempt={attempt}: {e}")
-                print(f"[x-trend][llm]   snippet: {snippet}")
+                print(f"[builder-trend][llm] ❌ {category} attempt={attempt}: {e}")
+                print(f"[builder-trend][llm]   snippet: {snippet}")
                 if attempt < max_attempts - 1:
                     time.sleep(2)
 
         if last_error is not None:
-            print(f"[x-trend][llm] ⚠ fallback for {category}")
+            print(f"[builder-trend][llm] ⚠ fallback for {category}")
             sorted_c = sorted(arr, key=lambda x: x.get('score', 0), reverse=True)
             for c in sorted_c[:effective_picks_n]:
                 m = c.get('metrics', {})
