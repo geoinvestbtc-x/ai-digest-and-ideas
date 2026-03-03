@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     IDEA_MODE: int = 1
     
     # LLM Settings
-    IDEA_MODEL: str = "google/gemini-3-flash-preview"
+    LLM_MODEL: str = "google/gemini-3-flash-preview"
     OPENROUTER_API_KEY: str = ""
     
     # Discovery Settings

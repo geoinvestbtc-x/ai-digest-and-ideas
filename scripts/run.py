@@ -87,13 +87,13 @@ def main():
     print(f"  ROOT           : {ROOT}")
     print(f"  picks_n        : {picks_n}")
     print(f"  memory_days    : {memory_days}")
-    print(f"  DIGEST_MODEL   : {os.getenv('DIGEST_MODEL', 'openai/gpt-5-mini')}")
+    print(f"  LLM_MODEL   : {os.getenv('LLM_MODEL', 'openai/gpt-5-mini')}")
     print(f"  ONLY_CATEGORY  : {os.getenv('DIGEST_ONLY_CATEGORY', '(all)')}")
     thread_ctx_enabled = os.getenv('THREAD_CONTEXT_ENABLED', '1') == '1'
     thread_ctx_top_n = int(os.getenv('THREAD_CONTEXT_TOP_N', '5'))
     print(f"  THREAD_CONTEXT : {'enabled' if thread_ctx_enabled else 'disabled'} (top_n={thread_ctx_top_n})")
     print(f"  SEND_TELEGRAM  : {os.getenv('SEND_TELEGRAM', '0')}")
-    print(f"  TELEGRAM_TARGET: {os.getenv('TELEGRAM_TARGET', '(not set)')}")
+    print(f"  TELEGRAM_CHAT_ID: {os.getenv('TELEGRAM_CHAT_ID', '(not set)')}")
     print(f"  OPENROUTER_KEY : {_mask(os.getenv('OPENROUTER_API_KEY', ''))}")
     print(f"  TWITTERAPI_KEY : {_mask(os.getenv('TWITTERAPI_IO_KEY', ''))}")
     print(f"  TELEGRAM_TOKEN : {_mask(os.getenv('TELEGRAM_BOT_TOKEN', ''))}")
@@ -443,14 +443,14 @@ def main():
     sent_count = 0
     if dry_run:
         print(f"  Telegram skipped (DRY RUN)")
-    elif os.getenv('SEND_TELEGRAM', '0') == '1' and os.getenv('TELEGRAM_TARGET'):
+    elif os.getenv('SEND_TELEGRAM', '0') == '1' and os.getenv('TELEGRAM_CHAT_ID'):
         if not messages:
             print(f"  ⚠ SEND_TELEGRAM=1, но 0 сообщений.")
         else:
             print(f"  → sending {len(messages)} message(s) to Telegram...")
             sent_count = send_messages(
                 messages,
-                target=os.getenv('TELEGRAM_TARGET'),
+                target=os.getenv('TELEGRAM_CHAT_ID'),
                 channel=os.getenv('TELEGRAM_CHANNEL', 'telegram'),
             )
             print(f"  → sent: {sent_count}/{len(messages)}")
@@ -499,7 +499,7 @@ def main():
     # ══════════════════════════════════════════════════════════
     # STAGE 7: PIPELINE SUMMARY → Telegram
     # ══════════════════════════════════════════════════════════
-    if not dry_run and os.getenv('SEND_TELEGRAM', '0') == '1' and os.getenv('TELEGRAM_TARGET') and sent_count > 0:
+    if not dry_run and os.getenv('SEND_TELEGRAM', '0') == '1' and os.getenv('TELEGRAM_CHAT_ID') and sent_count > 0:
         cost = usage_stats.get('cost_usd', 0)
         total_tok = usage_stats.get('total_tokens', 0)
         llm_calls = usage_stats.get('llm_calls', 0)
@@ -520,7 +520,7 @@ def main():
         print(f"  → Sending pipeline summary to Telegram...")
         send_messages(
             [{'category': '__pipeline_summary__', 'text': summary_text}],
-            target=os.getenv('TELEGRAM_TARGET'),
+            target=os.getenv('TELEGRAM_CHAT_ID'),
             channel=os.getenv('TELEGRAM_CHANNEL', 'telegram'),
         )
 

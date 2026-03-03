@@ -15,8 +15,8 @@ def _detect_root() -> str:
     return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 ROOT = _detect_root()
-BOT_TOKEN = os.getenv('TELEGRAM_DIGEST_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
-CHAT_ID = os.getenv('TELEGRAM_CHAT_ID') or os.getenv('TELEGRAM_TARGET') or os.getenv('TELEGRAM_CHANNEL')
+BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
+CHAT_ID = os.getenv('TELEGRAM_CHAT_ID') or os.getenv('TELEGRAM_CHAT_ID') or os.getenv('TELEGRAM_CHANNEL')
 
 def format_card(idea: dict) -> str:
     """Format a single idea into the Russian Business Idea Radar card."""
@@ -99,7 +99,7 @@ def send_cost_summary(token_usage: dict):
     output_cost = (completion_tokens / 1_000_000) * 0.30
     total_cost = input_cost + output_cost
     
-    model = config.IDEA_MODEL
+    model = config.LLM_MODEL
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     
     text = (

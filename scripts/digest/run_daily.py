@@ -159,8 +159,8 @@ def run_idea_radar(dry_run: bool = False):
     """Run the Business Idea Radar pipeline."""
     # ... existing ...
     # Wait to avoid passing BOT_TOKEN/CHAT_ID manually into radar if we can avoid it.
-    BOT_TOKEN = os.getenv("TELEGRAM_DIGEST_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
-    CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_TARGET") or os.getenv("TELEGRAM_CHANNEL")
+    BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
+    CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHANNEL")
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ── Business Idea Radar started ──")
     try:
         import collect
@@ -242,8 +242,8 @@ def main():
     print(f"\n[pipeline] Total Pipeline LLM usage: {total_prompt_tokens} prompt + {total_completion_tokens} completion = {total_tok} tokens.")
     print(f"[pipeline] Total Pipeline Estimated cost: ${cost:.6f}")
 
-    bot_token = os.getenv("TELEGRAM_DIGEST_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_TARGET") or os.getenv("TELEGRAM_CHANNEL")
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHANNEL")
     
     if not args.dry_run and bot_token and chat_id and total_tok > 0:
         import requests

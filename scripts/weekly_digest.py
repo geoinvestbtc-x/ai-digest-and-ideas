@@ -55,11 +55,11 @@ from bookmarks_store import get_all, mark_deep_read_sent
 
 # ── Config ────────────────────────────────────────────────────
 
-TG_TOKEN = os.getenv('TELEGRAM_DIGEST_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
+TG_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
 TWITTERAPI_KEY = os.getenv('TWITTERAPI_IO_KEY')
 OPENROUTER_KEY = os.getenv('OPENROUTER_API_KEY')
-WEEKLY_MODEL = os.getenv('WEEKLY_DIGEST_MODEL', 'openai/gpt-4o')
-TG_TARGET = os.getenv('TELEGRAM_TARGET')
+WEEKLY_MODEL = os.getenv('WEEKLY_LLM_MODEL', 'openai/gpt-4o')
+TG_TARGET = os.getenv('TELEGRAM_CHAT_ID')
 WEEKLY_LANG = os.getenv('WEEKLY_DIGEST_LANG', 'ru')  # 'ru' or 'en'
 TG_API = f'https://api.telegram.org/bot{TG_TOKEN}'
 TWITTER_API = 'https://api.twitterapi.io'
@@ -330,7 +330,7 @@ def llm_weekly_analysis(category: str, enriched_tweets: list) -> str:
 def tg_send(text: str, target: str = None) -> bool:
     target = target or TG_TARGET
     if not target:
-        print("[weekly] No TELEGRAM_TARGET set!")
+        print("[weekly] No TELEGRAM_CHAT_ID set!")
         return False
 
     payload = {
@@ -378,7 +378,7 @@ def format_category_digest(category: str, analysis: str, tweet_count: int) -> st
 
 def main():
     if not TG_TOKEN:
-        print("[weekly] ERROR: TELEGRAM_DIGEST_BOT_TOKEN not set"); sys.exit(1)
+        print("[weekly] ERROR: TELEGRAM_BOT_TOKEN not set"); sys.exit(1)
     if not TWITTERAPI_KEY:
         print("[weekly] ERROR: TWITTERAPI_IO_KEY not set"); sys.exit(1)
     if not OPENROUTER_KEY:

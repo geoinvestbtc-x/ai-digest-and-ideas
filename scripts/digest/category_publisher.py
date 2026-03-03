@@ -6,8 +6,8 @@ import os
 import requests
 from datetime import datetime, timezone
 
-BOT_TOKEN = os.getenv("TELEGRAM_DIGEST_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
-CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_TARGET") or os.getenv("TELEGRAM_CHANNEL")
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHAT_ID") or os.getenv("TELEGRAM_CHANNEL")
 
 CATEGORY_EMOJIS = {
     "AI Marketing":    "📣",

@@ -154,7 +154,7 @@ def group_picks(picks):
 
 
 def _send_via_telegram_http(text: str, target: str, reply_markup=None) -> bool:
-    token = os.getenv('TELEGRAM_DIGEST_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
+    token = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
     if not token:
         return False
 
@@ -192,10 +192,10 @@ def send_messages(messages, target: str, channel: str = 'telegram'):
         text = m['text']
         picks_data = m.get('picks_data', [])
 
-        token = os.getenv('TELEGRAM_DIGEST_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
+        token = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
 
         if channel == 'telegram' and require_html and not token:
-            print("[x-trend][telegram] Missing TELEGRAM_DIGEST_BOT_TOKEN/TELEGRAM_BOT_TOKEN; skip sending to avoid plain-text output")
+            print("[x-trend][telegram] Missing TELEGRAM_BOT_TOKEN/TELEGRAM_BOT_TOKEN; skip sending to avoid plain-text output")
             continue
 
         # Build inline keyboard if we have picks_data

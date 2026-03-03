@@ -54,7 +54,7 @@ Finally, output a JSON array of ALL ideas (include ALL ideas, do not filter by s
 class RadarProcessor:
     def __init__(self):
         self.api_key = config.OPENROUTER_API_KEY
-        self.model = config.IDEA_MODEL
+        self.model = config.LLM_MODEL
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
         

@@ -60,7 +60,7 @@ from bookmarks_store import save as bk_save, exists as bk_exists, remove as bk_r
 
 # ── Config ────────────────────────────────────────────────────
 
-TG_TOKEN = os.getenv('TELEGRAM_DIGEST_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
+TG_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
 TG_API = f'https://api.telegram.org/bot{TG_TOKEN}'
 POLL_TIMEOUT = 30
 
@@ -283,7 +283,7 @@ def handle_radar_callback(callback_query):
 
 def main():
     if not TG_TOKEN:
-        print("[bot] ERROR: No TELEGRAM_DIGEST_BOT_TOKEN or TELEGRAM_BOT_TOKEN set")
+        print("[bot] ERROR: No TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN set")
         sys.exit(1)
 
     print(f"[bot] 🤖 Bot handler started")

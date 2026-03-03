@@ -5,7 +5,7 @@ import re
 import time
 import requests
 
-MODEL = os.getenv('DIGEST_MODEL', 'openai/gpt-4o-mini')
+MODEL = os.getenv('LLM_MODEL', 'openai/gpt-4o-mini')
 
 # Per-category framing injected into user context so LLM curates with intent
 CATEGORY_CONTEXT = {
