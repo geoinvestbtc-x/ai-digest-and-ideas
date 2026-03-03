@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from config import config
 
 def _detect_root() -> str:
-    env_root = os.getenv('X_TREND_ROOT')
+    env_root = os.getenv('AI_DIGEST_ROOT')
     if env_root:
         return env_root
     server_root = '/home/geo/.openclaw/workspace'

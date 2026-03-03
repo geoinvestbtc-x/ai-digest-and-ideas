@@ -160,7 +160,7 @@ def _request_with_backoff(url, headers, params, timeout=40, retries=3):
             r.raise_for_status()
             return r
         wait_s = (2 ** attempt) * 1.5 + random.random()
-        print(f"[builder-trend][discover] 429 rate-limited, waiting {wait_s:.1f}s (attempt {attempt})")
+        print(f"[ai-digest][discover] 429 rate-limited, waiting {wait_s:.1f}s (attempt {attempt})")
         time.sleep(wait_s)
     r.raise_for_status()
     return r
@@ -185,7 +185,7 @@ def _paginated_search(category: str, query: str, query_type: str, max_pages: int
         all_tweets.extend(tweets)
 
         print(
-            f"[builder-trend][discover] cat={category} type={query_type} "
+            f"[ai-digest][discover] cat={category} type={query_type} "
             f"page={page_idx + 1} items={len(tweets)} total={len(all_tweets)} "
             f"has_next={'1' if has_next else '0'} cursor_len={len(next_cursor)}"
         )
@@ -193,12 +193,12 @@ def _paginated_search(category: str, query: str, query_type: str, max_pages: int
         if not has_next or not next_cursor:
             break
         if len(all_tweets) >= MAX_ITEMS_PER_QUERY:
-            print(f"[builder-trend][discover]   → stop: max_items ({MAX_ITEMS_PER_QUERY}) reached")
+            print(f"[ai-digest][discover]   → stop: max_items ({MAX_ITEMS_PER_QUERY}) reached")
             break
 
         in_window_count = sum(1 for t in tweets if _in_window(t.get("createdAt", "")))
         if tweets and in_window_count / len(tweets) < 0.3:
-            print(f"[builder-trend][discover]   → stop: most tweets older than {STOP_IF_OLDER_HOURS}h "
+            print(f"[ai-digest][discover]   → stop: most tweets older than {STOP_IF_OLDER_HOURS}h "
                   f"({in_window_count}/{len(tweets)} in window)")
             break
 
@@ -208,7 +208,7 @@ def _paginated_search(category: str, query: str, query_type: str, max_pages: int
 
     kept = [t for t in all_tweets if _in_window(t.get("createdAt", ""))]
     print(
-        f"[builder-trend][discover] DONE cat={category} type={query_type} "
+        f"[ai-digest][discover] DONE cat={category} type={query_type} "
         f"pages={pages_fetched} total_items={len(all_tweets)} kept_in_window={len(kept)}"
     )
     return kept
@@ -277,10 +277,10 @@ def _fetch_trends(woeid: int = 1) -> list[dict]:
             desc = t.get("meta_description") or ""
             if name:
                 result.append({"name": name, "query": query, "rank": rank, "description": desc})
-        print(f"[builder-trend][trends] fetched {len(result)} trends (woeid={woeid})")
+        print(f"[ai-digest][trends] fetched {len(result)} trends (woeid={woeid})")
         return result
     except Exception as e:
-        print(f"[builder-trend][trends] ERROR fetching trends: {e}")
+        print(f"[ai-digest][trends] ERROR fetching trends: {e}")
         return []
 
 
@@ -301,7 +301,7 @@ def _match_trends_to_categories(trends: list[dict]) -> dict[str, list[dict]]:
                 matched[cat].append(trend)
     for cat, hits in matched.items():
         if hits:
-            print(f"[builder-trend][trends] cat={cat} matched {len(hits)} trends: "
+            print(f"[ai-digest][trends] cat={cat} matched {len(hits)} trends: "
                   f"{', '.join(t['name'] for t in hits)}")
     return matched
 
@@ -311,7 +311,7 @@ def _search_trends_for_category(category: str, trend: dict, seen_ids: set) -> li
     query = trend["query"]
     # Add lang and engagement filters since trend queries are bare
     full_query = f"({query}) min_faves:5 lang:en -is:retweet -is:reply"
-    print(f"[builder-trend][trends] searching trend '{trend['name']}' for cat={category}")
+    print(f"[ai-digest][trends] searching trend '{trend['name']}' for cat={category}")
     try:
         tweets = _paginated_search(category, full_query, "Top", max_pages=2)
         items = []
@@ -323,10 +323,10 @@ def _search_trends_for_category(category: str, trend: dict, seen_ids: set) -> li
             c = _to_candidate(category, tw, source="trend")
             c["trend_name"] = trend["name"]
             items.append(c)
-        print(f"[builder-trend][trends] trend '{trend['name']}' → {len(items)} new candidates")
+        print(f"[ai-digest][trends] trend '{trend['name']}' → {len(items)} new candidates")
         return items
     except Exception as e:
-        print(f"[builder-trend][trends] ERROR searching trend '{trend['name']}': {e}")
+        print(f"[ai-digest][trends] ERROR searching trend '{trend['name']}': {e}")
         return []
 
 
@@ -372,10 +372,10 @@ def _search_users_by_keyword(keyword: str, limit: int = 20) -> list[str]:
             # Only include accounts with meaningful following (avoid bots)
             if uname and followers >= 500:
                 usernames.append(uname.lstrip("@"))
-        print(f"[builder-trend][dyn_authors] keyword='{keyword}' → {len(usernames)} users found")
+        print(f"[ai-digest][dyn_authors] keyword='{keyword}' → {len(usernames)} users found")
         return usernames
     except Exception as e:
-        print(f"[builder-trend][dyn_authors] ERROR searching users for '{keyword}': {e}")
+        print(f"[ai-digest][dyn_authors] ERROR searching users for '{keyword}': {e}")
         return []
 
 
@@ -390,7 +390,7 @@ def _get_dynamic_authors(category: str) -> list[str]:
             cached_at = datetime.fromisoformat(cached_at_str)
             if (now - cached_at).total_seconds() / 3600 < DYN_AUTHORS_CACHE_H:
                 usernames = entry.get("usernames", [])
-                print(f"[builder-trend][dyn_authors] cat={category} cache hit → {len(usernames)} authors")
+                print(f"[ai-digest][dyn_authors] cat={category} cache hit → {len(usernames)} authors")
                 return usernames
         except Exception:
             pass
@@ -424,7 +424,7 @@ def _fetch_quotations(tweet_id: str, max_items: int = 20) -> list[dict]:
             tweets = tweets.get("tweets", [])
         return tweets
     except Exception as e:
-        print(f"[builder-trend][quotes] ERROR fetching quotations for {tweet_id}: {e}")
+        print(f"[ai-digest][quotes] ERROR fetching quotations for {tweet_id}: {e}")
         return []
 
 
@@ -444,7 +444,7 @@ def _expand_with_quotations(category: str, candidates: list[dict], seen_ids: set
         tid = c.get("id", "")
         if not tid:
             continue
-        print(f"[builder-trend][quotes] expanding tweet {tid} (cat={category})")
+        print(f"[ai-digest][quotes] expanding tweet {tid} (cat={category})")
         raw_quotes = _fetch_quotations(tid, max_items=QUOTES_MAX_PER_TWEET)
         added = 0
         for tw in raw_quotes:
@@ -460,7 +460,7 @@ def _expand_with_quotations(category: str, candidates: list[dict], seen_ids: set
             added += 1
         _sleep(base=1.2, jitter=0.8)
         if added:
-            print(f"[builder-trend][quotes]   → {added} quote tweets added")
+            print(f"[ai-digest][quotes]   → {added} quote tweets added")
     return new_items
 
 
@@ -489,7 +489,7 @@ def fetch_tweet_thread(tweet_id: str) -> list[dict]:
         if status == 404:
             # endpoint not found → try replies fallback
             return _fetch_thread_via_replies(tweet_id)
-        print(f"[builder-trend][thread] ERROR fetching thread for {tweet_id}: {e}")
+        print(f"[ai-digest][thread] ERROR fetching thread for {tweet_id}: {e}")
         return []
 
 
@@ -503,7 +503,7 @@ def _fetch_thread_via_replies(tweet_id: str) -> list[dict]:
         tweets = data.get("tweets") or []
         return tweets
     except Exception as e:
-        print(f"[builder-trend][thread] replies fallback ERROR for {tweet_id}: {e}")
+        print(f"[ai-digest][thread] replies fallback ERROR for {tweet_id}: {e}")
         return []
 
 
@@ -550,7 +550,7 @@ def _paginated_community_search(category: str, query: str, max_pages: int) -> li
         try:
             r = _request_with_backoff(url, headers, params, timeout=40, retries=2)
         except Exception as e:
-            print(f"[builder-trend][community] ERROR page={page_idx+1} query='{query}': {e}")
+            print(f"[ai-digest][community] ERROR page={page_idx+1} query='{query}': {e}")
             break
 
         j = r.json()
@@ -564,7 +564,7 @@ def _paginated_community_search(category: str, query: str, max_pages: int) -> li
         all_tweets.extend(tweets)
 
         print(
-            f"[builder-trend][community] cat={category} page={page_idx+1} "
+            f"[ai-digest][community] cat={category} page={page_idx+1} "
             f"items={len(tweets)} total={len(all_tweets)} has_next={'1' if has_next else '0'}"
         )
 
@@ -575,7 +575,7 @@ def _paginated_community_search(category: str, query: str, max_pages: int) -> li
 
         in_window_count = sum(1 for t in tweets if _in_window(t.get("createdAt", "")))
         if tweets and in_window_count / len(tweets) < 0.3:
-            print(f"[builder-trend][community]   → stop: most tweets outside window")
+            print(f"[ai-digest][community]   → stop: most tweets outside window")
             break
 
         cursor = next_cursor
@@ -583,7 +583,7 @@ def _paginated_community_search(category: str, query: str, max_pages: int) -> li
 
     kept = [t for t in all_tweets if _in_window(t.get("createdAt", ""))]
     print(
-        f"[builder-trend][community] DONE cat={category} query='{query[:40]}' "
+        f"[ai-digest][community] DONE cat={category} query='{query[:40]}' "
         f"pages={pages_fetched} total={len(all_tweets)} kept={len(kept)}"
     )
     return kept
@@ -600,7 +600,7 @@ def _discover_communities(category: str, seen_ids: set) -> list[dict]:
 
     items = []
     for query in queries:
-        print(f"[builder-trend][community] searching cat={category} query='{query}'")
+        print(f"[ai-digest][community] searching cat={category} query='{query}'")
         try:
             tweets = _paginated_community_search(category, query, max_pages=COMMUNITIES_MAX_PAGES)
             added = 0
@@ -613,9 +613,9 @@ def _discover_communities(category: str, seen_ids: set) -> list[dict]:
                 items.append(c)
                 added += 1
             if added:
-                print(f"[builder-trend][community] query='{query[:40]}' → {added} new candidates")
+                print(f"[ai-digest][community] query='{query[:40]}' → {added} new candidates")
         except Exception as e:
-            print(f"[builder-trend][community] ERROR cat={category} query='{query}': {e}")
+            print(f"[ai-digest][community] ERROR cat={category} query='{query}': {e}")
         _sleep(base=2.0, jitter=1.0)
 
     return items
@@ -628,7 +628,7 @@ def _load_authors() -> dict:
     root = Path(__file__).resolve().parent.parent
     path = root / "data" / "authors.yaml"
     if not path.exists():
-        print(f"[builder-trend][discover] authors.yaml not found at {path}")
+        print(f"[ai-digest][discover] authors.yaml not found at {path}")
         return {}
     with open(path, 'r', encoding='utf-8') as f:
         raw = yaml.safe_load(f) or {}
@@ -669,9 +669,9 @@ def _discover_authors(category: str, usernames: list, seen_ids: set):
                 items.append(_to_candidate(category, tw, source="author"))
                 found += 1
             if found:
-                print(f"[builder-trend][discover] author @{username} → {found} tweets in window")
+                print(f"[ai-digest][discover] author @{username} → {found} tweets in window")
         except Exception as e:
-            print(f"[builder-trend][discover] author @{username} ERROR: {e}")
+            print(f"[ai-digest][discover] author @{username} ERROR: {e}")
         _sleep(base=1.5, jitter=1.0)
     return items
 
@@ -690,7 +690,7 @@ def run(max_pages: int = 2, only_category=None):
         if all_trends:
             trends_by_category = _match_trends_to_categories(all_trends)
     else:
-        print("[builder-trend][discover] Trends disabled (DISCOVER_TRENDS_ENABLED=0)")
+        print("[ai-digest][discover] Trends disabled (DISCOVER_TRENDS_ENABLED=0)")
 
     categories = list(CATEGORY_QUERIES.items())
     if only_category:
@@ -722,7 +722,7 @@ def run(max_pages: int = 2, only_category=None):
                     all_items.append(_to_candidate(category, tw, source="keyword"))
                     keyword_found += 1
             except Exception as e:
-                print(f"[builder-trend][discover] ERROR cat={category} type={query_type}: {e}")
+                print(f"[ai-digest][discover] ERROR cat={category} type={query_type}: {e}")
             _sleep(base=2.0, jitter=1.5)
 
         # ── Trend-based discovery ──
@@ -759,7 +759,7 @@ def run(max_pages: int = 2, only_category=None):
                     all_items.extend(dyn_items)
                     dyn_author_found = len(dyn_items)
             except Exception as e:
-                print(f"[builder-trend][dyn_authors] ERROR cat={category}: {e}")
+                print(f"[ai-digest][dyn_authors] ERROR cat={category}: {e}")
             _sleep(base=1.5, jitter=1.0)
 
         # ── Community tweet search ──
@@ -769,12 +769,12 @@ def run(max_pages: int = 2, only_category=None):
                 all_items.extend(community_items)
                 community_found = len(community_items)
             except Exception as e:
-                print(f"[builder-trend][community] ERROR cat={category}: {e}")
+                print(f"[ai-digest][community] ERROR cat={category}: {e}")
             _sleep(base=1.5, jitter=1.0)
 
         merged = len(all_items)
         print(
-            f"[builder-trend][discover] cat={category} "
+            f"[ai-digest][discover] cat={category} "
             f"keyword={keyword_found} trend={trend_found} quotes={quote_found} "
             f"authors_static={author_found} authors_dyn={dyn_author_found} "
             f"community={community_found} total={merged}"

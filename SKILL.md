@@ -1,9 +1,9 @@
 ---
-name: builder-trend-digest
+name: ai-digest-and-ideas
 description: Daily trend digest for X/Twitter and AI GitHub projects. Use when user asks to collect trends for AI Marketing, AI Coding, AI Design, General AI, plus interesting new AI projects from @GithubProjects; summarize via OpenRouter nano model; deduplicate with 7-day memory; and prepare Telegram/Notion outputs.
 ---
 
-# Builder Trend Digest
+# AI Digest & Ideas
 
 ## Goal
 Run a daily pipeline (manual or cron):
@@ -26,7 +26,7 @@ Run a daily pipeline (manual or cron):
 - `TELEGRAM_TARGET=<chat id | @username | phone>`
 - `TELEGRAM_CHANNEL=telegram`
 - `TELEGRAM_BOT_TOKEN=<telegram bot token>` (local-only direct Telegram API; server still uses OpenClaw channel)
-- `X_TREND_ROOT=/path/to/workspace` (override workspace root for local runs; defaults to OpenClaw workspace if present, otherwise repo root)
+- `AI_DIGEST_ROOT=/path/to/workspace` (override workspace root for local runs; defaults to OpenClaw workspace if present, otherwise repo root)
 
 ## Topics
 - OpenClaw Marketing
@@ -40,7 +40,7 @@ Run a daily pipeline (manual or cron):
 
 ## Run (manual)
 ```bash
-python3 skills/builder-trend-digest/scripts/run.py
+python3 skills/ai-digest-and-ideas/scripts/run.py
 ```
 
 ## Outputs

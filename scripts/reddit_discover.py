@@ -23,7 +23,7 @@ import yaml
 # ── Root detection ────────────────────────────────────────────
 
 def _detect_root() -> Path:
-    env_root = os.getenv('X_TREND_ROOT')
+    env_root = os.getenv('AI_DIGEST_ROOT')
     if env_root:
         return Path(env_root).expanduser()
     server_root = Path('/home/geo/.openclaw/workspace')
@@ -43,7 +43,7 @@ TOP_LIMIT           = int(os.getenv('REDDIT_TOP_LIMIT', '25'))
 SLEEP_BETWEEN       = float(os.getenv('REDDIT_SLEEP', '1.1'))  # seconds between requests
 
 _HEADERS = {
-    'User-Agent': os.getenv('REDDIT_USER_AGENT', 'builder-trend-digest/1.0 (personal digest bot)'),
+    'User-Agent': os.getenv('REDDIT_USER_AGENT', 'ai-digest-and-ideas/1.0 (personal digest bot)'),
     'Accept': 'application/json',
 }
 

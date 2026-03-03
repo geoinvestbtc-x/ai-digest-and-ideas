@@ -26,7 +26,7 @@ import requests
 # ── Root detection ────────────────────────────────────────────
 
 def _detect_root() -> Path:
-    env_root = os.getenv('X_TREND_ROOT')
+    env_root = os.getenv('AI_DIGEST_ROOT')
     if env_root:
         return Path(env_root).expanduser()
     server_root = Path('/home/geo/.openclaw/workspace')
@@ -295,7 +295,7 @@ def llm_weekly_analysis(category: str, enriched_tweets: list) -> str:
         'Authorization': f'Bearer {OPENROUTER_KEY}',
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://local.openclaw',
-        'X-Title': 'builder-trend-weekly-digest',
+        'X-Title': 'ai-digest-weekly-digest',
     }
     payload = {
         'model': WEEKLY_MODEL,

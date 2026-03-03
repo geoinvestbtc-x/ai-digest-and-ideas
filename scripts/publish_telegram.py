@@ -168,7 +168,7 @@ def _send_via_telegram_http(text: str, target: str, reply_markup=None) -> bool:
         payload['reply_markup'] = json.dumps(reply_markup)
 
     try:
-        print(f"[builder-trend][telegram] HTTP send -> chat={target}, len={len(text)}, has_buttons={'yes' if reply_markup else 'no'}")
+        print(f"[ai-digest][telegram] HTTP send -> chat={target}, len={len(text)}, has_buttons={'yes' if reply_markup else 'no'}")
         r = requests.post(
             f'https://api.telegram.org/bot{token}/sendMessage',
             json=payload,
@@ -176,10 +176,10 @@ def _send_via_telegram_http(text: str, target: str, reply_markup=None) -> bool:
         )
         ok = r.status_code == 200
         body = (r.text or "")[:400].replace("\n", " ")
-        print(f"[builder-trend][telegram] response status={r.status_code}, ok={ok}, body_snippet={body!r}")
+        print(f"[ai-digest][telegram] response status={r.status_code}, ok={ok}, body_snippet={body!r}")
         return ok
     except Exception as e:
-        print(f"[builder-trend][telegram] HTTP error: {e!r}")
+        print(f"[ai-digest][telegram] HTTP error: {e!r}")
         return False
 
 
@@ -195,7 +195,7 @@ def send_messages(messages, target: str, channel: str = 'telegram'):
         token = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('TELEGRAM_BOT_TOKEN')
 
         if channel == 'telegram' and require_html and not token:
-            print("[builder-trend][telegram] Missing TELEGRAM_BOT_TOKEN/TELEGRAM_BOT_TOKEN; skip sending to avoid plain-text output")
+            print("[ai-digest][telegram] Missing TELEGRAM_BOT_TOKEN/TELEGRAM_BOT_TOKEN; skip sending to avoid plain-text output")
             continue
 
         # Build inline keyboard if we have picks_data
@@ -204,15 +204,15 @@ def send_messages(messages, target: str, channel: str = 'telegram'):
             reply_markup = _build_interesting_keyboard(picks_data)
 
         if token:
-            print("[builder-trend][telegram] Using direct Telegram Bot API path")
+            print("[ai-digest][telegram] Using direct Telegram Bot API path")
             if _send_via_telegram_http(text, target=target, reply_markup=reply_markup):
                 sent += 1
                 continue
             if channel == 'telegram' and require_html:
-                print("[builder-trend][telegram] HTTP send failed and TELEGRAM_REQUIRE_HTML=1; skip fallback to avoid losing bold formatting")
+                print("[ai-digest][telegram] HTTP send failed and TELEGRAM_REQUIRE_HTML=1; skip fallback to avoid losing bold formatting")
                 continue
 
-        print(f"[builder-trend][telegram] Falling back to openclaw CLI for target={target}")
+        print(f"[ai-digest][telegram] Falling back to openclaw CLI for target={target}")
         plain_text = _strip_html(text)
         cmd = [
             'openclaw', 'message', 'send',
@@ -222,8 +222,8 @@ def send_messages(messages, target: str, channel: str = 'telegram'):
         ]
         try:
             out = subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT)
-            print(f"[builder-trend][telegram] openclaw CLI sent ok, output={out!r}")
+            print(f"[ai-digest][telegram] openclaw CLI sent ok, output={out!r}")
             sent += 1
         except Exception as e:
-            print(f"[builder-trend][telegram] openclaw CLI error: {e!r}")
+            print(f"[ai-digest][telegram] openclaw CLI error: {e!r}")
     return sent

@@ -1,4 +1,4 @@
-# Builder Trend Digest 🚀
+# AI Digest & Ideas 🚀
 
 Professional pipeline for discovering, ranking, and summarizing X (Twitter) trends for technical audiences. Designed to track AI and Dev topics with high precision and low noise.
 
@@ -25,8 +25,8 @@ Professional pipeline for discovering, ranking, and summarizing X (Twitter) tren
 
 1. **Clone & Setup**:
    ```bash
-   git clone https://github.com/geoinvestbtc-x/builder-trend-digest.git
-   cd builder-trend-digest
+   git clone https://github.com/geoinvestbtc-x/ai-digest-and-ideas.git
+   cd ai-digest-and-ideas
    python3 -m venv .venv
    source .venv/bin/activate
    pip install -r requirements.txt

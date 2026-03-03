@@ -9,5 +9,5 @@ Can be re-enabled selectively (e.g. for top-1 pick) in v1.3+.
 
 
 def run(items):
-    print("[builder-trend][extract] extract_external_disabled=1 (v1.2: pass-through)")
+    print("[ai-digest][extract] extract_external_disabled=1 (v1.2: pass-through)")
     return list(items)

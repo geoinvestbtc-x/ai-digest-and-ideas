@@ -119,7 +119,7 @@ Example:
                 'Authorization': f'Bearer {self.api_key}',
                 'Content-Type': 'application/json',
                 'HTTP-Referer': 'https://local.openclaw', 
-                'X-Title': 'builder-trend-digest',
+                'X-Title': 'ai-digest-and-ideas',
             }
             
             payload = {

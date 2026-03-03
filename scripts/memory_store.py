@@ -20,7 +20,7 @@ RANKED_TTL_DAYS = int(os.getenv('TREND_RANKED_TTL_DAYS', '3'))
 
 
 def _detect_root() -> Path:
-    env_root = os.getenv('X_TREND_ROOT')
+    env_root = os.getenv('AI_DIGEST_ROOT')
     if env_root:
         return Path(env_root).expanduser()
     server_root = Path('/home/geo/.openclaw/workspace')
