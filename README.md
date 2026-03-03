@@ -1,68 +1,78 @@
 # AI Digest & Ideas 🚀
 
-Professional pipeline for discovering, ranking, and summarizing X (Twitter) trends for technical audiences. Designed to track AI and Dev topics with high precision and low noise.
+Professional pipeline for discovering, ranking, and summarizing trends for technical audiences and solo founders. Designed to track AI, Dev, Design, and Marketing topics while uncovering actionable business ideas with high precision and low noise.
 
 ## ✨ Key Features
 
-- **Multi-Category Discovery**: Scans Top and Latest tweets for AI Coding, AI Design, AI Marketing, General AI, and more.
-- **Smart Ranking**: Advanced scoring system based on engagement metrics (bookmarks, retweets, followers) with content filtering.
-- **LLM-Powered Summarization**: Uses `gpt-5-mini` (via OpenRouter) to extract meaningful insights.
-- **Human-Readable Titles**: Implements `_smart_excerpt` to handle original tweet wording, ensuring title integrity and technical relevance.
-- **Two-Tier Memory System**:
-    - **Picks**: Saved for 30 days (never repeat sent content).
-    - **Ranked**: Saved for 3 days (don't waste LLM tokens on the same content twice, but allow re-evaluation later).
-- **Clean Telegram Output**: Beautifully formatted messages with bold titles, "Why" explanations, and source links.
-- **Usage & Cost Tracking**: Detailed reporting of token usage (including reasoning tokens) and pipeline operation costs.
+- **Multi-Source Discovery**: Scans X (Twitter), Reddit, Hacker News, Product Hunt, Indie Hackers, Habr, and VC.ru.
+- **AI-Powered Filtering**: Uses `google/gemini-3-flash-preview` to select the most actionable content specifically for solo developers and small teams.
+- **Business Idea Radar**: Automatically analyzes trends to generate validated business ideas with target audiences, problem descriptions, and ICPs.
+- **Smart Formatting**: Sends clean, readable Telegram digests with "Clean Titles" and "Why it matters" explanations for every post.
+- **Total Cost Tracking**: Transparent reporting of LLM token usage and costs for every daily run.
 
 ## 🛠 Tech Stack
 
-- **Python 3.9+**
-- **LLM**: OpenAI GPT-5-mini via OpenRouter
-- **Data Source**: TwitterAPI.io
-- **Messaging**: Telegram Bot API / OpenClaw CLI
+- **Core**: Python 3.9+
+- **LLM**: Gemini 3 Flash (via OpenRouter)
+- **Database/Memory**: Local JSON-based memory store for deduplication
+- **Notifications**: Telegram Bot API
 
 ## 🚀 Getting Started
 
-1. **Clone & Setup**:
-   ```bash
-   git clone https://github.com/geoinvestbtc-x/ai-digest-and-ideas.git
-   cd ai-digest-and-ideas
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+### 1. Installation
 
-2. **Configuration**:
-   Create a `.env` file:
-   ```env
-   OPENROUTER_API_KEY=your_key
-   TWITTERAPI_API_KEY=your_key
-   TELEGRAM_BOT_TOKEN=your_token
-   TELEGRAM_TARGET=@your_channel
-   SEND_TELEGRAM=1
-   DIGEST_MODEL=openai/gpt-5-mini
-   ```
+```bash
+git clone https://github.com/geoinvestbtc-x/ai-digest-and-ideas.git
+cd ai-digest-and-ideas
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-3. **Run Pipeline**:
-   ```bash
-   python3 scripts/run.py
-   ```
+### 2. Configuration
 
-## 📂 Project Structure
+Create a `.env` file in the root directory:
 
-- `scripts/run.py`: Main entry point / orchestrator.
-- `scripts/discover.py`: X data fetching.
-- `scripts/rank.py`: Scoring and filtering logic.
-- `scripts/summarize.py`: LLM integration & title excerpting.
-- `scripts/publish_telegram.py`: Message rendering and delivery.
-- `scripts/memory_store.py`: Two-tier deduplication logic.
+```env
+# --- GENERAL SECRETS ---
+OPENROUTER_API_KEY=your_key_here
 
-## 📊 Pipeline Observability
+# --- TELEGRAM SETTINGS ---
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=@your_channel_or_chat_id
 
-Each run ends with a summary in the console and an optional report in Telegram:
-- 📊 Funnel stats: Discovered → Ranked → Picks → Sent.
-- 🤖 LLM stats: Prompt/Completion/Reasoning tokens.
-- 💰 Cost: Exact USD cost of the run.
+# --- X / TWITTER API ---
+TWITTERAPI_IO_KEY=your_twitterapi_io_key
 
----
-*Built for Advanced Agentic Coding and AI Enthusiasts.*
+# --- MODELS & CONFIG ---
+LLM_MODEL=google/gemini-3-flash-preview
+DIGEST_MAX_PER_TOPIC=10
+```
+
+### 3. Usage
+
+To run the complete daily pipeline (Category Digests + Business Idea Radar):
+
+```bash
+source .venv/bin/activate
+python3 scripts/digest/run_daily.py
+```
+
+**Available Flags:**
+- `--dry-run`: Run the entire pipeline without sending results to Telegram (prints to console).
+- `--only-digest`: Run only the category-based trend digests.
+- `--only-radar`: Run only the Business Idea Radar.
+
+## 📡 Category Coverage
+
+The system currently tracks and filters content for:
+- 📣 **AI Marketing** — growth tactics and automation
+- ⚡ **AI Coding** — agentic workflows and developer tools
+- 🧠 **General AI** — model updates and infrastructure
+- 🎨 **AI Design** — UI/UX automation and component generation
+- 🦞 **OpenClaw** — automation frameworks and agent patterns
+- 🐙 **GitHub Projects** — boilerplates and time-saving libraries
+
+## 🤖 CI/CD
+
+A GitHub Actions workflow is included in `.github/workflows/pipeline.yml` for manual dry-run verification of the pipeline.
