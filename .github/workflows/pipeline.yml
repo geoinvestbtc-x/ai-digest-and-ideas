@@ -1,9 +1,6 @@
 name: Digest Pipeline (Dry Run)
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       run_digest:
@@ -52,9 +49,4 @@ jobs:
             ARGS="$ARGS --only-digest"
           fi
           
-          # If it's a pull request, run everything as a dry run to verify the scripts don't crash
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            python scripts/digest/run_daily.py --dry-run
-          else
-            python scripts/digest/run_daily.py $ARGS
-          fi
+          python scripts/digest/run_daily.py $ARGS
