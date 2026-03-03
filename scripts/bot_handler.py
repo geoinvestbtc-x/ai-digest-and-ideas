@@ -22,6 +22,12 @@ from pathlib import Path
 
 import requests
 
+# ── Radar imports ─────────────────────────────────────────────
+try:
+    from radar import memory as radar_memory
+except ImportError:
+    radar_memory = None
+
 # ── Root detection ────────────────────────────────────────────
 
 def _detect_root() -> Path:
@@ -209,6 +215,70 @@ def handle_interesting(callback_query):
     print(f"[bot] 🔥 Saved {platform} item {item_key} (cat={info.get('category', '?')})")
 
 
+# ── Radar Handlers ───────────────────────────────────────────
+
+def _get_radar_idea(short_title: str) -> dict:
+    cache_dir = os.path.join(ROOT, 'data', 'radar_cache')
+    path = os.path.join(cache_dir, f"{short_title}.json")
+    if os.path.exists(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+def handle_radar_callback(callback_query):
+    cq_id = callback_query.get('id')
+    cb_data = callback_query.get('data', '')
+    
+    # radar_interest:TITLE, radar_solved:TITLE, radar_mvp:TITLE, radar_val:TITLE, radar_anti:TITLE
+    parts = cb_data.split(':', 1)
+    if len(parts) != 2:
+        return
+        
+    action, short_title = parts[0], parts[1]
+    
+    # Status updates via Memory module
+    if action == 'radar_interest':
+        if radar_memory:
+            radar_memory.mark_status(short_title.replace('_', ' '), 'interested')
+        tg_answer_callback(cq_id, text='✨ Буду искать похожие!')
+        print(f"[bot][radar] Marked {short_title} as interested")
+        return
+        
+    if action == 'radar_solved':
+        if radar_memory:
+            radar_memory.mark_status(short_title.replace('_', ' '), 'solved')
+        tg_answer_callback(cq_id, text='✅ Отметил как решено')
+        print(f"[bot][radar] Marked {short_title} as solved")
+        return
+        
+    # Detail lookups
+    idea = _get_radar_idea(short_title)
+    if not idea:
+        tg_answer_callback(cq_id, text='❌ Данные не найдены в кэше')
+        return
+        
+    # For MVP, Validation, Anti-thesis we send a new message
+    chat_id = callback_query.get('message', {}).get('chat', {}).get('id')
+    text = ""
+    
+    if action == 'radar_mvp':
+        text = f"🛠 <b>MVP ({idea.get('idea_title', '')})</b>\n\n{idea.get('mvp_7_days', 'Нет данных')}"
+    elif action == 'radar_val':
+        text = f"🧪 <b>Validation ({idea.get('idea_title', '')})</b>\n\n<b>Threshold:</b> {idea.get('decision_threshold', '')}\n\n<b>Distribution:</b> {idea.get('distribution', '')}\n\n<b>Monetization:</b> {idea.get('monetization', '')}"
+    elif action == 'radar_anti':
+        text = f"🛑 <b>Anti-thesis ({idea.get('idea_title', '')})</b>\n\n{idea.get('anti_thesis', 'Нет данных')}"
+        
+    if chat_id and text:
+        url = f"{TG_API}/sendMessage"
+        requests.post(url, json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"}, timeout=10)
+        tg_answer_callback(cq_id)
+        print(f"[bot][radar] Sent {action} details for {short_title}")
+    else:
+        tg_answer_callback(cq_id, text='Ошибка отправки')
+
 # ── Main polling loop ────────────────────────────────────────
 
 def main():
@@ -236,6 +306,12 @@ def main():
                         handle_interesting(cq)
                     except Exception as e:
                         print(f"[bot] ❌ Error: {e}")
+                        traceback.print_exc()
+                elif data.startswith('radar_'):
+                    try:
+                        handle_radar_callback(cq)
+                    except Exception as e:
+                        print(f"[bot] ❌ Radar Error: {e}")
                         traceback.print_exc()
 
         except requests.exceptions.Timeout:
