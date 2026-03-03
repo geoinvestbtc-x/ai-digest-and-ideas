@@ -6,7 +6,11 @@ Professional pipeline for discovering, ranking, and summarizing trends for techn
 
 - **Multi-Source Discovery**: Scans X (Twitter), Reddit, Hacker News, Product Hunt, Indie Hackers, Habr, and VC.ru.
 - **AI-Powered Filtering**: Uses `google/gemini-3-flash-preview` to select the most actionable content specifically for solo developers and small teams.
-- **Business Idea Radar**: Automatically analyzes trends to generate validated business ideas with target audiences, problem descriptions, and ICPs.
+- **Business Idea Radar**: A specialized sub-pipeline that scans comments on Reddit/HN and posts on X to identify real user pain points. It transforms these "whining" signals into structured business ideas including:
+  - **The Pain**: Detailed problem description.
+  - **The Solution**: Proposed MVP strategy.
+  - **ICP**: Target audience and buying potential.
+  - **Scoring**: 0-100 rating based on evidence density and market potential.
 - **Smart Formatting**: Sends clean, readable Telegram digests with "Clean Titles" and "Why it matters" explanations for every post.
 - **Total Cost Tracking**: Transparent reporting of LLM token usage and costs for every daily run.
 
