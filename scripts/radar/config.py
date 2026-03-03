@@ -18,7 +18,6 @@ class Settings(BaseSettings):
     IDEA_MIN_SCORE: int = 70
     IDEA_MAX_PER_DAY: int = 20      # How many top ideas to send to Telegram
     IDEA_TARGET_RAW: int = 60       # Target number of raw ideas before picking top N
-    IDEA_MIN_EVIDENCE_DENSITY: int = 3
     
     # Memory & Dedup Settings
     IDEA_MEMORY_DAYS: int = 60
